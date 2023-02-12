@@ -5,8 +5,9 @@ import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { MongoDbModule } from './config/mongo-db/mongo-db.module';
 import { UsersModule } from './users/users.module';
-import { AuthService } from './auth/auth.service';
+
 import { AuthModule } from './auth/auth.module';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -22,10 +23,9 @@ import { AuthModule } from './auth/auth.module';
       load: [configuration],
     }),
     MongoDbModule,
-    UsersModule,
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigService, AuthService],
+  providers: [AppService, ConfigService],
 })
 export class AppModule {}
