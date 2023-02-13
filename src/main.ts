@@ -1,24 +1,17 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
 import * as cookieParser from 'cookie-parser';
+
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/http-exception-filter/http-exception-filter';
+import { setupSwagger } from './common/setup-swagger/setup-swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Swagger Example')
-    .setDescription('Swagger study API description')
-    .setVersion('0.0.1')
-    .addTag('swagger')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  setupSwagger(app);
   app.useGlobalFilters(new HttpExceptionFilter());
-
   app.useGlobalPipes(
     new ValidationPipe({
       /**
@@ -38,6 +31,7 @@ async function bootstrap() {
       },
     }),
   );
-  await app.listen(3000);
+
+  await app.listen(AppModule.port);
 }
 bootstrap();

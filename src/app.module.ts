@@ -4,10 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { MongoDbModule } from './config/mongo-db/mongo-db.module';
-import { UsersModule } from './users/users.module';
 
 import { AuthModule } from './auth/auth.module';
-import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -28,4 +26,13 @@ import { UsersService } from './users/users.service';
   controllers: [AppController],
   providers: [AppService, ConfigService],
 })
-export class AppModule {}
+export class AppModule {
+  static port: string;
+  static swaggerId: string;
+  static password: string;
+  constructor(configService: ConfigService) {
+    AppModule.port = configService.get('port');
+    AppModule.password = configService.get('swaggerPwd');
+    AppModule.swaggerId = configService.get('swaggerId');
+  }
+}

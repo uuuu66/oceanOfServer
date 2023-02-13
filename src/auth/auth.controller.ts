@@ -8,6 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
@@ -17,6 +18,7 @@ import JwtAuthenticationGuard from './jwtAuthenticaiton.guard';
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
 
 @Controller('authentication')
+@ApiTags('인증/권한')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('register')
