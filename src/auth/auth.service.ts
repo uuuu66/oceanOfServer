@@ -4,7 +4,11 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { TokenPayload } from './interfaces';
+import { SignInResponse, TokenPayload, TokenResponse } from './interfaces';
+import { SignUpDto } from './dtos/sign-up-dto';
+import SignInDto from './dtos/sign-in-dto';
+import { accessMaxAge, keys, refreshMaxAge } from 'src/common/constants';
+import { CookieOptions, response } from 'express';
 @Injectable()
 export class AuthService {
   constructor(
@@ -12,21 +16,39 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
-  public async register(registrationData: CreateUserDto) {
+  public async register(registrationData: SignUpDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
-      const createdUser = await this.usersService.createUser({
+      const dto: CreateUserDto = {
         ...registrationData,
         password: hashedPassword,
-      });
+        feeling: '모르겠음',
+        role: 1,
+      };
+      const createdUser = await this.usersService.createUser(dto);
       createdUser.password = undefined;
 
       return createdUser;
     } catch (error) {
-      throw new HttpException(
-        JSON.stringify(error),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  public async signIn(signInData: SignInDto): Promise<SignInResponse> {
+    try {
+      const userId = signInData.phoneNumber;
+      const user = await this.usersService.readUserByPhoneNumber(userId);
+      user.password = undefined;
+      const accessToken = this.getJwtAccessToken(user.id);
+      const refreshToken = this.getJwtRefreshToken(user.id);
+      return {
+        user,
+        accessToken: accessToken.token,
+        accessOption: accessToken.cookieOption,
+        refreshToken: refreshToken.token,
+        refreshOption: refreshToken.cookieOption,
+      };
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.FORBIDDEN);
     }
   }
   public async getAuthenticatedUser(
@@ -61,14 +83,37 @@ export class AuthService {
       );
     }
   }
-  public getJwtToken(userId: number) {
-    const payload: TokenPayload = { userId };
-    const token = this.jwtService.sign(payload);
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
-      'jwtExpirationTime',
-    )}`;
+  public getCookieForLogOut(): TokenResponse {
+    const cookieOption: CookieOptions = {
+      httpOnly: true,
+      maxAge: 0,
+    };
+    return { token: '', cookieOption };
   }
-  public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+
+  public getJwtAccessToken(userId: number): TokenResponse {
+    const payload: TokenPayload = { userId };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('jwtAccessSecret'),
+    });
+
+    const cookieOption: CookieOptions = {
+      httpOnly: true,
+      maxAge: accessMaxAge,
+    };
+    return { token, cookieOption };
+  }
+
+  public getJwtRefreshToken(userId: number): TokenResponse {
+    const payload: TokenPayload = { userId };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('jwtRefreshSecret'),
+    });
+    const cookieOption: CookieOptions = {
+      httpOnly: true,
+      maxAge: refreshMaxAge,
+    };
+
+    return { token, cookieOption };
   }
 }

@@ -1,5 +1,10 @@
 import { INestApplication } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerCustomOptions,
+} from '@nestjs/swagger';
+import { SwaggerUiOptions } from '@nestjs/swagger/dist/interfaces/swagger-ui-options.interface';
 import * as expressBasicAuth from 'express-basic-auth';
 import { AppModule } from 'src/app.module';
 
@@ -21,8 +26,23 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('oceanOf Swagger API Docs')
     .setDescription('oceanOf Swagger API Docs')
     .setVersion('0.0.1')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'JWT',
+        in: 'header',
+      },
+      'access_token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api-docs', app, document);
+  const swaggerOptions: SwaggerUiOptions = {
+    persistAuthorization: true,
+  };
+  const swaggerCustomOptions: SwaggerCustomOptions = {
+    swaggerOptions,
+  };
+  SwaggerModule.setup('api-docs', app, document, swaggerCustomOptions);
 }

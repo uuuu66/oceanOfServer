@@ -1,12 +1,7 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { SignUpDto } from './sign-up-dto';
 
-export class SignInDto {
-  @IsNotEmpty()
-  @IsString()
-  readonly phoneNumber: string;
-
-  @IsString()
-  @MaxLength(30)
-  @IsNotEmpty()
-  readonly password: string;
-}
+export default class SignInDto extends PickType(SignUpDto, [
+  'password',
+  'phoneNumber',
+]) {}

@@ -3,7 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-import { IUser } from 'src/interfaces/IUsers';
+
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -12,7 +13,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       usernameField: 'phoneNumber',
     });
   }
-  async validate(phoneNumber: string, password: string): Promise<IUser> {
+  async validate(phoneNumber: string, password: string): Promise<User> {
     return this.authService.getAuthenticatedUser(phoneNumber, password);
   }
 }
