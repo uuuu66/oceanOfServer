@@ -6,9 +6,9 @@ import { UsersModule } from 'src/users/users.module';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtAccessStrategy } from './jwt.access.strategy';
-import { JwtRefreshStrategy } from './jwt.refresh.strategy';
-import { LocalStrategy } from './local.strategy';
+import { JwtAccessStrategy } from './strategies/jwt.access.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt.refresh.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [

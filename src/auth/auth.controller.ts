@@ -16,7 +16,7 @@ import { AuthService } from './auth.service';
 import SignInDto from './dtos/sign-in-dto';
 import { SignUpDto } from './dtos/sign-up-dto';
 
-import { LocalAuthenticationGuard } from './localAuthentication.guard';
+import { LocalAuthenticationGuard } from './strategies/localAuthentication.guard';
 import { keys } from 'src/common/constants';
 
 @Controller('authentication')
