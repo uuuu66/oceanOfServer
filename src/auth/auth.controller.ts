@@ -18,6 +18,7 @@ import { SignUpDto } from './dtos/sign-up-dto';
 
 import { LocalAuthenticationGuard } from './strategies/localAuthentication.guard';
 import { keys } from 'src/common/constants';
+import SignInResponseDto from './dtos/sign-in-response-dto';
 
 @Controller('authentication')
 @ApiTags('인증/권한')
@@ -48,12 +49,12 @@ export class AuthController {
   async logIn(
     @Body() request: SignInDto,
     @Res() response,
-  ): Promise<ObjectResponse<User>> {
-    const { user, accessToken, accessOption, refreshToken, refreshOption } =
+  ): Promise<ObjectResponse<SignInResponseDto>> {
+    const { user, accessToken, refreshToken, refreshOption } =
       await this.authService.signIn(request);
-    response.cookie(keys.ACCESS_TOKEN_COOKIE, accessToken, accessOption);
+
     response.cookie(keys.REFRESH_TOKEN_COOKIE, refreshToken, refreshOption);
-    return response.send(new ObjectResponse(user));
+    return response.send(new ObjectResponse({ accessToken, ...user }));
   }
   @ApiDoc({
     summary: '로그아웃',

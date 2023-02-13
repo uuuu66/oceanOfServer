@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import { SignInResponse, TokenPayload, TokenResponse } from './interfaces';
 import { SignUpDto } from './dtos/sign-up-dto';
 import SignInDto from './dtos/sign-in-dto';
-import { accessMaxAge, keys, refreshMaxAge } from 'src/common/constants';
-import { CookieOptions, response } from 'express';
+import { accessMaxAge, refreshMaxAge } from 'src/common/constants';
+import { CookieOptions } from 'express';
 @Injectable()
 export class AuthService {
   constructor(
