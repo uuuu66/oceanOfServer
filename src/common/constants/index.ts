@@ -5,7 +5,7 @@ const DELETE_SUCCESS = '삭제 성공';
 const REFRESH_TOKEN_GUARD_TYPE = 'REFRESH_TOKEN';
 const REFRESH_TOKEN_COOKIE = 'REFRESH_TOKEN';
 const ACCESS_TOKEN_COOKIE = 'ACCESS_TOKEN';
-
+const LOCAL = 'LOCAL';
 export const messages = {
   CREATE_SUCCESS,
   FETCH_SUCCESS,
@@ -17,6 +17,7 @@ export const keys = {
   REFRESH_TOKEN_GUARD_TYPE,
   REFRESH_TOKEN_COOKIE,
   ACCESS_TOKEN_COOKIE,
+  LOCAL,
 };
 
 export const accessMaxAge = 60 * 1000 * 30;

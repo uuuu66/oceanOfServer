@@ -9,6 +9,7 @@ import { SignUpDto } from './dtos/sign-up-dto';
 import SignInDto from './dtos/sign-in-dto';
 import { accessMaxAge, refreshMaxAge } from 'src/common/constants';
 import { CookieOptions } from 'express';
+import ErrorResponse from 'src/common/dtos.ts/error-response';
 @Injectable()
 export class AuthService {
   constructor(
@@ -48,6 +49,7 @@ export class AuthService {
         refreshOption: refreshToken.cookieOption,
       };
     } catch (error) {
+      console.log(error);
       throw new HttpException(error, HttpStatus.FORBIDDEN);
     }
   }
@@ -57,14 +59,13 @@ export class AuthService {
   ) {
     try {
       const user = await this.usersService.readUserByPhoneNumber(phoneNumber);
+
       await this.verifyPassword(plainTextPassword, user.password);
       user.password = undefined;
       return user;
     } catch (error) {
-      throw new HttpException(
-        '잘못된 인증 정보입니다.',
-        HttpStatus.BAD_REQUEST,
-      );
+      console.log(error);
+      throw new HttpException(error.response, 403);
     }
   }
 
@@ -77,10 +78,8 @@ export class AuthService {
       hashedPassword,
     );
     if (!isPasswordMatching) {
-      throw new HttpException(
-        '잘못된 인증 정보입니다.',
-        HttpStatus.BAD_REQUEST,
-      );
+      const error = new Error('비밀번호가 일치하지 않습니다.');
+      throw new HttpException(error, HttpStatus.FORBIDDEN);
     }
   }
   public getCookieForLogOut(): TokenResponse {

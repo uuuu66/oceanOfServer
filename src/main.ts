@@ -26,7 +26,6 @@ async function bootstrap() {
       forbidNonWhitelisted: false,
       transform: true,
       exceptionFactory: (errors) => {
-        console.log(errors);
         return new BadRequestException(errors);
       },
     }),

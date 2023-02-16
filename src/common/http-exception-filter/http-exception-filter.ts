@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { Request, Response } from 'express';
+import ErrorResponse from '../dtos.ts/error-response';
 
 @Catch(HttpException)
 export class HttpExceptionFilter {
@@ -7,17 +8,19 @@ export class HttpExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = exception.getStatus();
+    console.log(exception, request.body);
+    const statusCode = exception.getStatus();
     const message = JSON.parse(
       JSON.stringify(exception.getResponse()),
     )?.message;
-
-    response.status(status).json({
-      statusCode: status,
+    console.log(message);
+    const error = new ErrorResponse({
+      statusCode,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message,
+      message: exception.message,
       type: exception.message,
     });
+    response.status(statusCode).json(error);
   }
 }

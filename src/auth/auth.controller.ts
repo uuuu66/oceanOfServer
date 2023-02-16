@@ -18,7 +18,8 @@ import { SignUpDto } from './dtos/sign-up-dto';
 
 import { LocalAuthenticationGuard } from './strategies/localAuthentication.guard';
 import { keys } from 'src/common/constants';
-import SignInResponseDto from './dtos/sign-in-response-dto';
+import SignInResponseDto from './dtos/auth-response-dto';
+import AuthResponseDto from './dtos/auth-response-dto';
 
 @Controller('authentication')
 @ApiTags('인증/권한')
@@ -31,7 +32,7 @@ export class AuthController {
     responseModel: User,
   })
   @HttpCode(201)
-  @Post('register')
+  @Post('sign-up')
   async register(@Body() registrationData: SignUpDto, @Res() response) {
     return response.send(
       new ObjectResponse(this.authService.register(registrationData)),
@@ -45,23 +46,23 @@ export class AuthController {
   })
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
-  @Post('log-in')
+  @Post('sign-in')
   async logIn(
     @Body() request: SignInDto,
     @Res() response,
   ): Promise<ObjectResponse<SignInResponseDto>> {
     const { user, accessToken, refreshToken, refreshOption } =
       await this.authService.signIn(request);
-
     response.cookie(keys.REFRESH_TOKEN_COOKIE, refreshToken, refreshOption);
-    return response.send(new ObjectResponse({ accessToken, ...user }));
+    const newResDto = new AuthResponseDto(user, accessToken);
+    return response.send(new ObjectResponse(newResDto));
   }
   @ApiDoc({
     summary: '로그아웃',
     description: '로그아웃입니다.',
   })
   @ApiBearerAuth()
-  @Post('log-out')
+  @Post('sign-out')
   async logOut(@Req() req, @Res() response) {
     response.set('Set-Cookie', this.authService.getCookieForLogOut());
     return response.sendStatus(204);
