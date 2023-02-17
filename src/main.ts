@@ -8,7 +8,9 @@ import { HttpExceptionFilter } from './common/http-exception-filter/http-excepti
 import { setupSwagger } from './common/setup-swagger/setup-swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['debug', 'error', 'log', 'warn'],
+  });
   app.use(cookieParser());
   setupSwagger(app);
   app.useGlobalFilters(new HttpExceptionFilter());
