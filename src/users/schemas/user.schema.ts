@@ -9,12 +9,12 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   @ApiProperty({})
-  @Prop()
-  id: number;
-
-  @ApiProperty({})
   @Prop({ required: true })
   nickName: string;
+
+  @ApiProperty({})
+  @Prop({ required: false })
+  profileImageId: number;
 
   @ApiProperty({})
   @Prop()

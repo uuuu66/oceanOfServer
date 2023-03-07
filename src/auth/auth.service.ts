@@ -10,6 +10,7 @@ import SignInDto from './dtos/sign-in-dto';
 import { accessMaxAge, refreshMaxAge } from 'src/common/constants';
 import { CookieOptions } from 'express';
 import ErrorResponse from 'src/common/dtos.ts/error-response';
+import { Types } from 'mongoose';
 @Injectable()
 export class AuthService {
   constructor(
@@ -90,7 +91,7 @@ export class AuthService {
     return { token: '', cookieOption };
   }
 
-  public getJwtAccessToken(userId: number): TokenResponse {
+  public getJwtAccessToken(userId: Types.ObjectId): TokenResponse {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('jwtAccessSecret'),
@@ -103,7 +104,7 @@ export class AuthService {
     return { token, cookieOption };
   }
 
-  public getJwtRefreshToken(userId: number): TokenResponse {
+  public getJwtRefreshToken(userId: Types.ObjectId): TokenResponse {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('jwtRefreshSecret'),

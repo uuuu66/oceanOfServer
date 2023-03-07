@@ -32,7 +32,7 @@ async function bootstrap() {
       },
     }),
   );
-
+  app.enableCors();
   await app.listen(AppModule.port);
 }
 bootstrap();

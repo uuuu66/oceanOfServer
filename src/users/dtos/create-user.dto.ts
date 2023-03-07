@@ -45,7 +45,6 @@ export class CreateUserDto {
 
   @ApiPropertyOptional({ description: '권한아이디' })
   @IsNumber()
-  @MaxLength(30)
   @IsNotEmpty()
   role?: number;
 }

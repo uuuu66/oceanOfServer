@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpStatus,
   Param,
   Post,
@@ -18,6 +19,13 @@ import { UsersService } from './users.service';
 @ApiTags('유저')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
+  @Get()
+  async getUsers(@Res() response) {
+    const users = await this.userService.readUsers();
+    console.log(users);
+    return response.status(HttpStatus.OK).json({ rows: users });
+  }
+
   @Post()
   async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
     const newUser = await this.userService.createUser(createUserDto);

@@ -1,8 +1,9 @@
 import { CookieOptions } from 'express';
+import { Types } from 'mongoose';
 import { User } from 'src/users/schemas/user.schema';
 
 export interface TokenPayload {
-  userId: number;
+  userId: Types.ObjectId;
 }
 export interface SignInResponse {
   user: User;

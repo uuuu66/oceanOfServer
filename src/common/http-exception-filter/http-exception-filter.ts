@@ -8,17 +8,16 @@ export class HttpExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    console.log(exception, request.body);
     const statusCode = exception.getStatus();
     const message = JSON.parse(
       JSON.stringify(exception.getResponse()),
     )?.message;
-    console.log(message);
+
     const error = new ErrorResponse({
       statusCode,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.message,
+      message: message,
       type: exception.message,
     });
     response.status(statusCode).json(error);
